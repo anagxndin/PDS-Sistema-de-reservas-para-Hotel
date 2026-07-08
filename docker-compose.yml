@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: hospedagem-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hospedagem
+      POSTGRES_USER: hospedagem
+      POSTGRES_PASSWORD: hospedagem
+    ports:
+      - "5432:5432"
+    volumes:
+      - hospedagem_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hospedagem -d hospedagem"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  hospedagem_pgdata:

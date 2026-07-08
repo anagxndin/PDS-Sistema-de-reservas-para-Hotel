@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: hospedagem-app
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hospedagem
+    username: hospedagem
+    password: hospedagem
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # 'update' e conveniente em desenvolvimento/faculdade.
+      # Em produção o ideal seria usar migrations (Flyway/Liquibase).
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+
+# Configuracoes do JWT.
+# O secret abaixo e apenas para desenvolvimento local do projeto da faculdade.
+# Em um projeto real, isso viria de uma variavel de ambiente, nunca commitado.
+jwt:
+  secret: ${JWT_SECRET:wiItfkFYOKCtPakCy7M8bV1cfB6Rp7BKDGtR/iCgYcz2Wn/nCtVhWWHepxKoQyb9}
+  expiration-ms: 86400000 # 24 horas
+  cookie-name: jwt
+
+logging:
+  level:
+    org.springframework.security: INFO
