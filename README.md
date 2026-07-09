@@ -52,6 +52,34 @@ Quando o grupo for adicionar **Acomodação** e **Reserva**, é só replicar o
 padrão: `model/entity/Acomodacao.java`, `model/repository/AcomodacaoRepository.java`,
 `model/service/AcomodacaoService.java`, e o endpoint em `controller/AcomodacaoController.java`.
 
+## Navegação (navbar)
+
+O menu de navegação fica centralizado em templates/fragments/navbar.html
+como um fragmento Thymeleaf (th:fragment="navbar(paginaAtual)"), incluído
+nas telas autenticadas via:
+
+`html<nav th:replace="~{fragments/navbar :: navbar('home')}"></nav>`
+
+O parâmetro paginaAtual ('home', 'buscar', 'acomodacoes', 'reservas')
+controla qual item do menu aparece destacado. Páginas não autenticadas
+(login.html, register.html, error.html) não usam o fragmento.
+
+### Acomodações e disponibilidade por data
+
+
+/acomodacoes/tipos — página de apresentação fixa dos 4 tipos
+(Solteiro, Duplo, Suíte, Família), com foto e descrição de cada um. Serve
+como porta de entrada para a listagem filtrada.
+/acomodacoes — listagem das acomodações cadastradas no banco, com
+filtro por tipo via query param (?tipo=DUPLO).
+/acomodacoes/buscar — formulário de busca por check-in/check-out
+(e tipo opcional).
+/acomodacoes/resultado — resultado da busca, calculado a partir da
+sobreposição de datas com reservas ativas (PENDENTE/CONFIRMADA) na
+tabela reservas.
+/api/acomodacoes/disponibilidade — mesmo cálculo de disponibilidade,
+exposto como JSON para consumo via fetch/AJAX.
+
 ## Como rodar
 
 Pré-requisitos: Java 21, Maven 3.9+ e Docker instalados.
@@ -116,11 +144,19 @@ JWT_SECRET=<uma chave secreta forte>
 - [x] Não permite login com credenciais inválidas
 - [x] Senha armazenada com hash (BCrypt), nunca em texto puro
 - [x] Sessão via JWT stateless (não usa `HttpSession`)
+- [x] Menu de navegação reutilizável, com item ativo destacado
+- [x] Modelo de dados de Acomodação, com CRUD básico (salvar/desativar)
+- [x] Listagem de acomodações com filtro por tipo
+- [x] Página de apresentação dos tipos de acomodação (com fotos)
+- [x] Busca de disponibilidade por período de datas
+- [x] Endpoint JSON de disponibilidade para uso via AJAX
+- [x] Dados de teste automáticos via data.sql
 
 ## Próximos passos (grupo)
 
-- Entidade `Acomodacao` + consulta com filtro por data
-- Entidade `Reserva` (com `status`: PENDENTE, CONFIRMADA, CANCELADA)
-- Fluxo de reserva (verificar disponibilidade - registrar - alterar disponibilidade)
-- Cancelamento (atualizar status - liberar acomodação)
+- Fluxo de reserva (verificar disponibilidade → registrar → alterar disponibilidade)
+- ReservaRepository, ReservaService, ReservaController
+- Tela "Minhas reservas" (item já reservado no menu, hoje desabilitado)
+- Cancelamento (atualizar status → liberar acomodação)
 - Tela de confirmação da reserva
+- Tela/endpoint de cadastro de acomodações (hoje só via data.sql/SQL manual)
