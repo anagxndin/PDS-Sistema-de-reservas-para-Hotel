@@ -1,3 +1,5 @@
+SHELL := C:/Program Files/Git/bin/bash.exe
+
 .PHONY: help db-up db-down db-logs db-reset run build test clean dev
 
 help: ## Lista os comandos disponiveis

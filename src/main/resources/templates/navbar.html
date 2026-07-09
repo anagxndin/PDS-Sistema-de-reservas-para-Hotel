@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="navbar(paginaAtual)" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/home}">Hospedagem</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu" aria-controls="navbarMenu"
+                aria-expanded="false" aria-label="Abrir menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${paginaAtual == 'home'} ? 'active fw-bold' : ''"
+                       th:href="@{/home}">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${paginaAtual == 'buscar'} ? 'active fw-bold' : ''"
+                       th:href="@{/acomodacoes/buscar}">Buscar disponibilidade</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${paginaAtual == 'acomodacoes'} ? 'active fw-bold' : ''"
+                       th:href="@{/acomodacoes}">Acomodações</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Habilitar quando a tela de reservas existir -->
+                    <a class="nav-link disabled" th:classappend="${paginaAtual == 'reservas'} ? 'active fw-bold' : ''"
+                       href="#" tabindex="-1" aria-disabled="true">Minhas reservas</a>
+                </li>
+            </ul>
+
+            <form th:action="@{/logout}" method="post" class="d-flex">
+                <button type="submit" class="btn btn-outline-light btn-sm">Sair</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>
