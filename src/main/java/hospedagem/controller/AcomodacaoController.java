@@ -5,6 +5,7 @@ import hospedagem.controller.dto.BuscaDisponibilidadeRequest;
 import hospedagem.model.entity.Acomodacao;
 import hospedagem.model.service.AcomodacaoService;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

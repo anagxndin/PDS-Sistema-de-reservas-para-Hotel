@@ -44,7 +44,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = extrairTokenDoCookie(request);
 
+      
+
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            System.out.println("TOKEN RECEBIDO: " + token);
             try {
                 String email = jwtService.extrairEmail(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
@@ -55,9 +58,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-            } catch (Exception ignored) {
-                // Token invalido/expirado: segue sem autenticar, o Security
-                // vai barrar o acesso a rotas protegidas normalmente.
+                 else {
+                    System.out.println("TOKEN INVALIDO PARA: " + email);
+                }
+            // } catch (Exception ignored) {
+            //     // Token invalido/expirado: segue sem autenticar, o Security
+            //     // vai barrar o acesso a rotas protegidas normalmente.
+            // }
+            } catch (Exception ex) {
+                ex.printStackTrace(); // TEMPORÁRIO — remover depois
             }
         }
 

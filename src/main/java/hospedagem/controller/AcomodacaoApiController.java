@@ -1,5 +1,5 @@
 package hospedagem.controller;
-
+import org.springframework.web.bind.annotation.RequestMapping;
 import hospedagem.controller.dto.AcomodacaoResponse;
 import hospedagem.model.entity.Acomodacao;
 import hospedagem.model.service.AcomodacaoService;

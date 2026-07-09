@@ -1,8 +1,10 @@
-package hospedagem.model.service;
+package hospedagem;
 
 import hospedagem.controller.dto.AcomodacaoResponse;
 import hospedagem.model.entity.Acomodacao;
 import hospedagem.model.repository.AcomodacaoRepository;
+import hospedagem.model.service.AcomodacaoService;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
