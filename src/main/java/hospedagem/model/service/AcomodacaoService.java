@@ -32,6 +32,14 @@ public class AcomodacaoService {
                 .toList();
     }
 
+    // Usado pelo fluxo de reserva (ReservaController) para exibir os dados da
+    // acomodacao escolhida na tela de "Confirme sua reserva".
+    public AcomodacaoResponse buscarPorId(Long id) {
+        Acomodacao acomodacao = acomodacaoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Acomodacao nao encontrada."));
+        return AcomodacaoResponse.fromEntity(acomodacao);
+    }
+
     /**
      * Consulta de disponibilidade por data (US "consultar disponibilidade de
      * quartos por data"). tipo pode ser null para nao filtrar por tipo.

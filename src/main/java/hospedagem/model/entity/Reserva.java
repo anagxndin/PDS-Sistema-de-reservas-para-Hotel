@@ -58,6 +58,17 @@ public class Reserva {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
+    // ---- US "fornecer informacoes pessoais para completar a reserva" ----
+    // Nome/e-mail ja vem do usuario logado (this.usuario); aqui so o que falta.
+    @Column(nullable = false, length = 14)
+    private String cpf;
+
+    @Column(nullable = false, length = 20)
+    private String telefone;
+
+    @Embedded
+    private DadosPagamento dadosPagamento;
+
     @PrePersist
     public void prePersist() {
         this.dataCriacao = LocalDateTime.now();

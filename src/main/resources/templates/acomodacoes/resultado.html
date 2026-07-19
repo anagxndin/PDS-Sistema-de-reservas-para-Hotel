@@ -36,6 +36,10 @@
                     <p class="card-text" th:text="${a.descricao}">Descrição</p>
                     <p class="fw-bold" th:text="'R$ ' + ${a.precoDiaria} + ' / diária'"></p>
                     <p class="small text-muted" th:text="'Capacidade: ' + ${a.capacidade}"></p>
+                    <a class="btn btn-primary btn-sm"
+                       th:href="@{/reservas/nova(acomodacaoId=${a.id}, checkin=${checkin}, checkout=${checkout})}">
+                        Reservar
+                    </a>
                 </div>
             </div>
         </div>
