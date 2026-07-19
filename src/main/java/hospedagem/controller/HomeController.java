@@ -1,7 +1,7 @@
 package hospedagem.controller;
 import hospedagem.model.entity.User;
 
-import hospedagem.model.entity.User;
+/*import hospedagem.model.entity.User;*/
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

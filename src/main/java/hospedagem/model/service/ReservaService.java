@@ -77,6 +77,7 @@ public class ReservaService {
         return ReservaResponse.fromEntity(reserva);
     }
 
+    @Transactional(readOnly = true)
     public List<ReservaResponse> listarPorUsuario(User usuario) {
         return reservaRepository.findByUsuarioOrderByDataCriacaoDesc(usuario)
                 .stream()
@@ -84,6 +85,7 @@ public class ReservaService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ReservaResponse buscarPorId(Long id, User usuario) {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva nao encontrada."));

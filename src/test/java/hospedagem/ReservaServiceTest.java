@@ -1,4 +1,4 @@
-package hospedagem.model.service;
+package hospedagem;
 
 import hospedagem.controller.dto.AcomodacaoResponse;
 import hospedagem.controller.dto.DadosPagamentoRequest;
@@ -11,6 +11,9 @@ import hospedagem.model.entity.User;
 import hospedagem.model.exception.AcomodacaoIndisponivelException;
 import hospedagem.model.repository.AcomodacaoRepository;
 import hospedagem.model.repository.ReservaRepository;
+import hospedagem.model.service.AcomodacaoService;
+import hospedagem.model.service.ReservaService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
