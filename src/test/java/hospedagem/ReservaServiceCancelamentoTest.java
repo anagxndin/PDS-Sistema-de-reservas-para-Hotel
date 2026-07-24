@@ -7,6 +7,7 @@ import hospedagem.model.entity.Acomodacao;
 import hospedagem.model.entity.Reserva;
 import hospedagem.model.entity.User;
 import hospedagem.model.exception.ReservaNaoPodeSerCanceladaException;
+import hospedagem.model.service.AcomodacaoService;
 import hospedagem.model.repository.AcomodacaoRepository;
 import hospedagem.model.repository.ReservaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -149,4 +150,4 @@ class ReservaServiceCancelamentoTest {
         assertThatThrownBy(() -> reservaService.cancelarReserva(dono, 999L, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-}s
+}
