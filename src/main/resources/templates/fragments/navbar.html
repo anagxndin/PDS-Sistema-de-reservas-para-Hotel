@@ -27,9 +27,8 @@
                        th:href="@{/acomodacoes}">Acomodações</a>
                 </li>
                 <li class="nav-item">
-                    <!-- Habilitar quando a tela de reservas existir -->
-                    <a class="nav-link disabled" th:classappend="${paginaAtual == 'reservas'} ? 'active fw-bold' : ''"
-                       href="#" tabindex="-1" aria-disabled="true">Minhas reservas</a>
+                    <a class="nav-link" th:classappend="${paginaAtual == 'reservas'} ? 'active fw-bold' : ''"
+                    th:href="@{/reservas}">Minhas reservas</a>
                 </li>
             </ul>
 
