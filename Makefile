@@ -1,3 +1,4 @@
+#SHELL := C:/Program Files/Git/bin/bash.exe
 ifeq ($(OS),Windows_NT)
 SHELL := C:/Program Files/Git/bin/bash.exe
 endif
