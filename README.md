@@ -135,28 +135,3 @@ produção, defina via variável de ambiente:
 ```
 JWT_SECRET=<uma chave secreta forte>
 ```
-
-## Regras já implementadas
-
-- [x] Não permite cadastro com e-mail duplicado
-- [x] Valida campos obrigatórios (nome, e-mail, senha, confirmação de senha)
-- [x] Valida formato de e-mail e tamanho mínimo de senha (6 caracteres)
-- [x] Não permite login com credenciais inválidas
-- [x] Senha armazenada com hash (BCrypt), nunca em texto puro
-- [x] Sessão via JWT stateless (não usa `HttpSession`)
-- [x] Menu de navegação reutilizável, com item ativo destacado
-- [x] Modelo de dados de Acomodação, com CRUD básico (salvar/desativar)
-- [x] Listagem de acomodações com filtro por tipo
-- [x] Página de apresentação dos tipos de acomodação (com fotos)
-- [x] Busca de disponibilidade por período de datas
-- [x] Endpoint JSON de disponibilidade para uso via AJAX
-- [x] Dados de teste automáticos via data.sql
-
-## Próximos passos (grupo)
-
-- Fluxo de reserva (verificar disponibilidade → registrar → alterar disponibilidade)
-- ReservaRepository, ReservaService, ReservaController
-- Tela "Minhas reservas" (item já reservado no menu, hoje desabilitado)
-- Cancelamento (atualizar status → liberar acomodação)
-- Tela de confirmação da reserva
-- Tela/endpoint de cadastro de acomodações (hoje só via data.sql/SQL manual)
