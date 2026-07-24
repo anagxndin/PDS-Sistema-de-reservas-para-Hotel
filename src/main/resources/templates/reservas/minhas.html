@@ -18,6 +18,10 @@
 <div class="container mt-5">
     <h1 class="h4 mb-4">Minhas reservas</h1>
 
+    <div th:if="${param.cancelamentoSucesso}" class="alert alert-success">
+        Reserva cancelada com sucesso.
+    </div>
+
     <div th:if="${#lists.isEmpty(reservas)}" class="alert alert-info">
         Você ainda não tem nenhuma reserva.
         <a th:href="@{/acomodacoes/buscar}">Buscar disponibilidade</a>
@@ -31,6 +35,7 @@
             <th>Check-out</th>
             <th>Valor</th>
             <th>Status</th>
+            <th class="text-end">Ações</th>
         </tr>
         </thead>
         <tbody>
@@ -43,6 +48,15 @@
                 <span class="badge"
                       th:classappend="${r.status.name() == 'CONFIRMADA'} ? 'bg-success' : (${r.status.name() == 'CANCELADA'} ? 'bg-danger' : 'bg-warning text-dark')"
                       th:text="${r.status}">PENDENTE</span>
+            </td>
+            <td class="text-end">
+               
+                <a th:if="${r.status.name() != 'CANCELADA'
+                           and r.checkin.isAfter(T(java.time.LocalDate).now().minusDays(1))}"
+                   th:href="@{/reservas/{id}/cancelar(id=${r.id})}"
+                   class="btn btn-outline-danger btn-sm">
+                    Cancelar
+                </a>
             </td>
         </tr>
         </tbody>

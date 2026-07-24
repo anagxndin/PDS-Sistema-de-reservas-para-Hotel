@@ -1,9 +1,11 @@
 package hospedagem.controller;
 
+import hospedagem.controller.dto.CancelamentoRequest;
 import hospedagem.controller.dto.ReservaRequest;
 import hospedagem.controller.dto.ReservaResponse;
 import hospedagem.model.entity.User;
 import hospedagem.model.exception.AcomodacaoIndisponivelException;
+import hospedagem.model.exception.ReservaNaoPodeSerCanceladaException;
 import hospedagem.model.service.ReservaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,11 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Endpoint REST equivalente ao fluxo de /reservas, para quando o formulario
- * for consumido via fetch/AJAX sem recarregar a pagina (mesmo padrao do
- * AcomodacaoApiController). Retorna JSON puro.
- */
+ 
 @RestController
 @RequestMapping("/api/reservas")
 public class ReservaApiController {
@@ -46,7 +44,18 @@ public class ReservaApiController {
         return reservaService.buscarPorId(id, usuario);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, AcomodacaoIndisponivelException.class})
+ 
+    @PostMapping("/{id}/cancelar")
+    public ResponseEntity<ReservaResponse> cancelar(@PathVariable Long id,
+                                                      @RequestBody(required = false) CancelamentoRequest request,
+                                                      @AuthenticationPrincipal User usuario) {
+        String motivo = request != null ? request.getMotivo() : null;
+        ReservaResponse reserva = reservaService.cancelarReserva(usuario, id, motivo);
+        return ResponseEntity.ok(reserva);
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class, AcomodacaoIndisponivelException.class,
+            ReservaNaoPodeSerCanceladaException.class})
     public ResponseEntity<Map<String, String>> handleValidacao(RuntimeException ex) {
         return ResponseEntity.badRequest().body(Map.of("erro", ex.getMessage()));
     }

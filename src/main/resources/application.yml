@@ -12,7 +12,6 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    defer-datasource-initialization: true
     hibernate:
       # 'update' e conveniente em desenvolvimento/faculdade.
       # Em produção o ideal seria usar migrations (Flyway/Liquibase).

@@ -1,10 +1,12 @@
 package hospedagem.controller;
 
+import hospedagem.controller.dto.CancelamentoRequest;
 import hospedagem.controller.dto.ReservaRequest;
 import hospedagem.controller.dto.ReservaResponse;
 import hospedagem.model.entity.DadosPagamento;
 import hospedagem.model.entity.User;
 import hospedagem.model.exception.AcomodacaoIndisponivelException;
+import hospedagem.model.exception.ReservaNaoPodeSerCanceladaException;
 import hospedagem.model.service.AcomodacaoService;
 import hospedagem.model.service.ReservaService;
 import jakarta.validation.Valid;
@@ -17,15 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-/**
- * Telas Thymeleaf do fluxo de reserva, disparado a partir de um resultado da
- * busca de disponibilidade (AcomodacaoController#buscar):
- *   1) GET  /reservas/nova              -> formulario (dados pessoais + pagamento)
- *   2) POST /reservas                   -> cria a reserva
- *   3) GET  /reservas/{id}/confirmacao  -> tela de confirmacao
- *   4) GET  /reservas                   -> "Minhas reservas"
- * Endpoint JSON equivalente (para AJAX) fica em ReservaApiController.
- */
+ 
 @Controller
 @RequestMapping("/reservas")
 public class ReservaController {
@@ -91,11 +85,44 @@ public class ReservaController {
         return "reservas/minhas";
     }
 
+     
+    @GetMapping("/{id}/cancelar")
+    public String telaCancelamento(@PathVariable Long id, @AuthenticationPrincipal User usuario, Model model) {
+        model.addAttribute("reserva", reservaService.buscarPorId(id, usuario));
+        if (!model.containsAttribute("cancelamentoRequest")) {
+            model.addAttribute("cancelamentoRequest", new CancelamentoRequest());
+        }
+        return "reservas/cancelar";
+    }
+
+    @PostMapping("/{id}/cancelar")
+    public String cancelar(@PathVariable Long id,
+                            @Valid @ModelAttribute("cancelamentoRequest") CancelamentoRequest request,
+                            BindingResult bindingResult,
+                            @AuthenticationPrincipal User usuario,
+                            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("reserva", reservaService.buscarPorId(id, usuario));
+            return "reservas/cancelar";
+        }
+
+        try {
+            reservaService.cancelarReserva(usuario, id, request.getMotivo());
+        } catch (IllegalArgumentException | ReservaNaoPodeSerCanceladaException ex) {
+            model.addAttribute("erro", ex.getMessage());
+            model.addAttribute("reserva", reservaService.buscarPorId(id, usuario));
+            return "reservas/cancelar";
+        }
+
+        return "redirect:/reservas?cancelamentoSucesso";
+    }
+
     private void carregarInfoAcomodacao(Long acomodacaoId, LocalDate checkin, LocalDate checkout, Model model) {
         try {
             model.addAttribute("acomodacao", acomodacaoService.buscarPorId(acomodacaoId));
         } catch (IllegalArgumentException ignored) {
-            // acomodacao invalida: o erro de validacao do form/service ja cobre esse caso
+             
         }
         model.addAttribute("checkin", checkin);
         model.addAttribute("checkout", checkout);

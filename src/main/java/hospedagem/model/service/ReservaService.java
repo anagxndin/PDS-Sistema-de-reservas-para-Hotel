@@ -9,17 +9,22 @@ import hospedagem.model.entity.DadosPagamento;
 import hospedagem.model.entity.Reserva;
 import hospedagem.model.entity.User;
 import hospedagem.model.exception.AcomodacaoIndisponivelException;
+import hospedagem.model.exception.ReservaNaoPodeSerCanceladaException;
 import hospedagem.model.repository.AcomodacaoRepository;
 import hospedagem.model.repository.ReservaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 public class ReservaService {
+
+     
+    private static final long HORAS_ANTECEDENCIA_MINIMA_CANCELAMENTO = 24;
 
     private final ReservaRepository reservaRepository;
     private final AcomodacaoRepository acomodacaoRepository;
@@ -33,22 +38,13 @@ public class ReservaService {
         this.acomodacaoService = acomodacaoService;
     }
 
-    /**
-     * US "registro de reserva" + US "fornecer informacoes pessoais".
-     * Fluxo: acomodacao existe -> ainda esta disponivel no periodo (revalidado
-     * aqui, nao so na tela de busca, para evitar corrida entre dois usuarios
-     * reservando a mesma vaga ao mesmo tempo) -> dados de pagamento validos ->
-     * persiste com status PENDENTE. valorTotal e calculado pela propria
-     * entidade Reserva (@PrePersist -> calcularValorTotal), nao aqui.
-     */
+   
     @Transactional
     public ReservaResponse criarReserva(User usuario, ReservaRequest request) {
         Acomodacao acomodacao = acomodacaoRepository.findById(request.getAcomodacaoId())
                 .orElseThrow(() -> new IllegalArgumentException("Acomodacao nao encontrada."));
 
-        // Reaproveita a validacao de periodo (datas nulas/invertidas/no passado)
-        // e a regra de disponibilidade (quantidadeTotal vs reservas ativas
-        // sobrepostas) ja usadas na tela de busca.
+       
         List<AcomodacaoResponse> disponiveis = acomodacaoService.buscarDisponibilidade(
                 request.getCheckin(), request.getCheckout(), acomodacao.getTipo());
 
@@ -87,13 +83,49 @@ public class ReservaService {
 
     @Transactional(readOnly = true)
     public ReservaResponse buscarPorId(Long id, User usuario) {
+        Reserva reserva = buscarEValidarDono(id, usuario);
+        return ReservaResponse.fromEntity(reserva);
+    }
+
+    
+    @Transactional
+    public ReservaResponse cancelarReserva(User usuario, Long reservaId, String motivo) {
+        Reserva reserva = buscarEValidarDono(reservaId, usuario);
+
+        if (reserva.getStatus() == Reserva.StatusReserva.CANCELADA) {
+            throw new ReservaNaoPodeSerCanceladaException("Esta reserva ja esta cancelada.");
+        }
+
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime inicioCheckin = reserva.getDataCheckin().atStartOfDay();
+
+        if (!inicioCheckin.isAfter(agora)) {
+            throw new ReservaNaoPodeSerCanceladaException(
+                    "Nao e possivel cancelar: o check-in desta reserva ja ocorreu.");
+        }
+
+        if (agora.isAfter(inicioCheckin.minusHours(HORAS_ANTECEDENCIA_MINIMA_CANCELAMENTO))) {
+            throw new ReservaNaoPodeSerCanceladaException(
+                    "Cancelamento nao permitido: e preciso cancelar com pelo menos "
+                            + HORAS_ANTECEDENCIA_MINIMA_CANCELAMENTO + "h de antecedencia do check-in.");
+        }
+
+        reserva.setStatus(Reserva.StatusReserva.CANCELADA);
+        reserva.setDataCancelamento(agora);
+        reserva.setMotivoCancelamento(motivo);
+
+        Reserva salva = reservaRepository.save(reserva);
+        return ReservaResponse.fromEntity(salva);
+    }
+
+     
+    private Reserva buscarEValidarDono(Long id, User usuario) {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva nao encontrada."));
         if (!Objects.equals(reserva.getUsuario().getId(), usuario.getId())) {
-            // mensagem generica de proposito: nao revela que o id existe e pertence a outro usuario
             throw new IllegalArgumentException("Reserva nao encontrada.");
         }
-        return ReservaResponse.fromEntity(reserva);
+        return reserva;
     }
 
     private DadosPagamento validarEMontarPagamento(DadosPagamentoRequest dto) {
@@ -124,8 +156,7 @@ public class ReservaService {
             throw new IllegalArgumentException("Cartao vencido.");
         }
 
-        // numero e dto.getCvv() completos nunca sao gravados: usamos so os
-        // 4 ultimos digitos abaixo, o resto sai de escopo aqui de proposito.
+       
         return DadosPagamento.builder()
                 .tipo(dto.getTipo())
                 .nomeTitular(dto.getNomeTitular())

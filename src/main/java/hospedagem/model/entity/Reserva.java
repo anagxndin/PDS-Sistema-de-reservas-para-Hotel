@@ -69,6 +69,14 @@ public class Reserva {
     @Embedded
     private DadosPagamento dadosPagamento;
 
+    // ---- US "cancelar reserva" ----
+    // Preenchidos somente quando status vira CANCELADA (ver ReservaService#cancelarReserva).
+    @Column(name = "data_cancelamento")
+    private LocalDateTime dataCancelamento;
+
+    @Column(name = "motivo_cancelamento", length = 300)
+    private String motivoCancelamento;
+
     @PrePersist
     public void prePersist() {
         this.dataCriacao = LocalDateTime.now();
@@ -89,6 +97,11 @@ public class Reserva {
             long noites = ChronoUnit.DAYS.between(dataCheckin, dataCheckout);
             this.valorTotal = precoDiaria.multiply(BigDecimal.valueOf(noites));
         }
+    }
+
+    
+    public boolean isCancelada() {
+        return this.status == StatusReserva.CANCELADA;
     }
 
     public enum StatusReserva {
