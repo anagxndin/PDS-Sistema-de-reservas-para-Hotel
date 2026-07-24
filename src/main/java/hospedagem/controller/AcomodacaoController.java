@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -74,5 +75,16 @@ public class AcomodacaoController {
         }
 
         return "acomodacoes/resultado";
+    }
+
+    @GetMapping("/{id}")
+    public String detalhe(@PathVariable Long id, Model model) {
+        try {
+            model.addAttribute("acomodacao", acomodacaoService.buscarPorId(id));
+            return "acomodacoes/detalhe";
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("mensagem", ex.getMessage());
+            return "error";
+        }
     }
 }

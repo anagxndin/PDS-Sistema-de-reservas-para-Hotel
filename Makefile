@@ -1,4 +1,7 @@
 #SHELL := C:/Program Files/Git/bin/bash.exe
+ifeq ($(OS),Windows_NT)
+SHELL := C:/Program Files/Git/bin/bash.exe
+endif
 
 .PHONY: help db-up db-down db-logs db-reset run build test clean dev
 

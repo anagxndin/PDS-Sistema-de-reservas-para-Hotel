@@ -18,6 +18,7 @@ spring:
       # Em produção o ideal seria usar migrations (Flyway/Liquibase).
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true

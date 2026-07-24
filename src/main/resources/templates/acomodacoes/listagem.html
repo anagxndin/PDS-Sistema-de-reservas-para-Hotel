@@ -28,15 +28,17 @@
 
     <div class="row g-4">
         <div class="col-md-4" th:each="a : ${acomodacoes}">
-            <div class="card h-100">
-                <img th:if="${a.urlImagem}" th:src="${a.urlImagem}" class="card-img-top" alt="">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${a.nome}">Nome</h5>
-                    <h6 class="card-subtitle mb-2 text-muted" th:text="${a.tipo}">Tipo</h6>
-                    <p class="card-text" th:text="${a.descricao}">Descrição</p>
-                    <p class="fw-bold" th:text="'R$ ' + ${a.precoDiaria} + ' / diária'"></p>
+            <a th:href="@{/acomodacoes/{id}(id=${a.id})}" class="text-decoration-none text-dark">
+                <div class="card h-100">
+                    <img th:if="${a.urlImagem}" th:src="${a.urlImagem}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${a.nome}">Nome</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${a.tipo}">Tipo</h6>
+                        <p class="card-text" th:text="${a.descricao}">Descrição</p>
+                        <p class="fw-bold" th:text="'R$ ' + ${a.precoDiaria} + ' / diária'"></p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>
